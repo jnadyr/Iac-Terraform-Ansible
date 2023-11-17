@@ -1,0 +1,60 @@
+#descrever a máquina em que se vai trabalhar
+- hosts: terraform-ansible
+
+#tarefas a serem executadas
+#dividir as tarefas em blocos: criação de arquivos; executar no shell; ...
+
+# Colocando Phyton3 e Virtualenv
+  tasks:
+  - name: instalando o Python3 e o virtualenv
+    apt:
+# é o gerenciador de pacotes do ubuntu, mas funciona com outras distros.
+      pkg:
+      - python3
+      - virtualenv
+      update_cache: yes
+#atualiza os repositórios (apt update!)
+    become: yes
+#become: yes é para rodar as tasks como sudo!
+
+#instalando depedencias com pip (Django e Django Rest)
+  - name: instalando depedencias com pip (Django e Django Rest)
+    pip: 
+      virtualenv: /home/ubuntu/virtualenv/venv
+#O ansible liga a virtualenv com o comamdo abaixo ou acima
+#passando o nome do pacotes
+      name:
+        - django
+        - djangorestframework
+#fazendo o Django aparecer como web site na internet
+  - name: verificando se o projeto já existe 
+  #aqui, começa o princípio da idempotência
+    stat:     #stat de estado (status)
+      path: /home/ubuntu/virtualenv/setup/settings.py 
+#quando inicia-se um projeto em django o arquivo settings.py é criado
+    register: projeto 
+  - name: Print file status # este comando é para debug
+    debug:
+     var: projeto.stat.exists #imprime true or false para a variável projeto!
+    #a saída do stat é a variável register. se true, settings.py existe. se false ...
+    #o valor de register fica guardado em projeto que será usado mais abaixo. 
+  - name: iniciando o projeto do django web na porta 8000
+#só posso usar uma shell. 
+#Caso use duas a segunda fecha a primeira. Eu posso concactenar comandos extras na shell!
+# O . (ponto) abaixo é para executar o activate! 
+    shell: '. /home/ubuntu/virtualenv/venv/bin/activate; django-admin startproject setup /home/ubuntu/virtualenv/'
+#O comando abaixo pode ser colocado para ignorar erros provenientes do shell! Usar com muito cuidado! 
+#Erros podem aparecer à frente do script!
+#   ignore_errors: yes
+    when: not projeto.stat.exists
+    #a variável projeto tem muita coisa dentro. devemos caminhar nela
+    #se o nosso settings.py não existir, executa-se o comando acima do shell. Senão, skip!
+# alterando o parametro host do arquivo settings.py se ele existir
+  - name: alterando o hosts do arquivo settings
+    lineinfile: 
+      path: /home/ubuntu/virtualenv/setup/settings.py
+# expressão regular
+      regexp: 'ALLOWED_HOSTS'
+      line: 'ALLOWED_HOSTS = ["*"]'
+#backrefs diz que se ele não encontrar ALLOWED_HOSTS no nosso arquivo ele não vai mexer no arquivo!
+      backrefs: yes
