@@ -12,13 +12,14 @@ provider "aws" {
   region  = var.regiao_aws
 }
  resource "aws_instance" "app_server" {
-  ami           = "ami-053b0d53c279acc90"
+  ami           = "ami-0230bd60aa48260c6"
 #buscando o valor da instancia
   instance_type = var.instancia
 #buscando o valor da chave
   key_name = var.chave
 #vinculando a instância ao security group criado em grupo de segurança
   vpc_security_group_ids = [aws_security_group.acesso_geral.id]
+  #vpc_security_group_ids = [aws_security_group.acesso_geral_prod.id]
 
   tags = {
     Name = "Terraform Ansible Phyton"
