@@ -1,5 +1,5 @@
 #descrever a máquina em que se vai trabalhar
-- hosts: terraform-ansible
+- hosts: terraformansible
 
 #tarefas a serem executadas
 #dividir as tarefas em blocos: criação de arquivos; executar no shell; ...
@@ -11,12 +11,12 @@
 # é o gerenciador de pacotes do ubuntu, mas funciona com outras distros.
       pkg:
       - python3
+      # - python 3.9
       - virtualenv
       update_cache: yes
 #atualiza os repositórios (apt update!)
     become: yes
 #become: yes é para rodar as tasks como sudo!
-
 #instalando depedencias com pip (Django e Django Rest)
   - name: instalando depedencias com pip (Django e Django Rest)
     pip: 
