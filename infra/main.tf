@@ -12,7 +12,7 @@ provider "aws" {
   region  = var.regiao_aws
 }
 resource "aws_instance" "app_server" {
-  ami            = "ami-0fc5d935ebf8bc3bc"
+  ami = "ami-0fc5d935ebf8bc3bc"
   # buscando o valor da instancia
 instance_type = var.instancia
 # buscando o valor da chave

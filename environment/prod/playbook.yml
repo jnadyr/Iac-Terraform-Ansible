@@ -19,15 +19,16 @@
     # become: yes é para rodar as tasks como sudo!
 
   - name: Clone a github repository
-    git:
+    # git: XXX este comando ou o comando abaixo para clonar repositório
+    ansible.builtin.git:
       repo: https://github.com/guilhermeonrails/clientes-leo-api.git
-      # local no github onde está o projeto
+      # local no github onde está o projeto adicionado do sufixo .git
       dest: /home/ubuntu/virtualenv/
       # destino na máquina
       version: master
       # version da branch que estamos utilizando
-      clone: yes
-      update: yes
+      # clone: yes  XXX este comando ou o comando acima para clonar repositório
+      # update: yes  XXX este comando ou o comando acima para clonar e atualizar repositório
   # instalando depedencias com pip (Django e Django Rest)
   - name: instalando depedencias com pip (Django e Django Rest)
     pip:
