@@ -29,17 +29,23 @@
       # version da branch que estamos utilizando
       # clone: yes  XXX este comando ou o comando acima para clonar repositório
       # update: yes  XXX este comando ou o comando acima para clonar e atualizar repositório
+      force: yes
+      # força a sobreposição do git clone. Atende ao princípio da idempotência
   # instalando depedencias com pip (Django e Django Rest)
   - name: instalando depedencias com pip (Django e Django Rest)
     pip:
+    # O PIP é uma ferramenta para gerenciamento de pacotes de software escrito em Python
+    # o PIP serve para instalar, remover, atualizar ou listar os pacotes instalados em um projeto
       virtualenv: /home/ubuntu/virtualenv/venv
       # O ansible liga a virtualenv com o comamdo abaixo ou acima
       # passando o nome do pacotes
-      name:
-        - django
-        - djangorestframework
+            # name: vai ser automatizada a instalação de pacotes 
+      # - django  vai ser automatizada a instalação de pacotes 
+      # - djangorestframework vai ser automatizada a instalação de pacotes 
         # fazendo o Django aparecer como web site na internet
         # alterando o parametro host do arquivo settings.py se ele existir
+      requirements: /home/ubuntu/virtualenv/requirements.txt
+      # passando o nome do pacotes via arquivo requirements.txt que estava no github
   - name: alterando o hosts do arquivo settings
     lineinfile:
       path: /home/ubuntu/virtualenv/setup/settings.py
@@ -49,3 +55,11 @@
       # backrefs diz que se ele não encontrar ALLOWED_HOSTS no nosso arquivo
       # ele não vai mexer no arquivo!
       backrefs: yes
+  - name: Configurando o banco de dados
+    # vamos subir um bando de dados
+    shell: '. /home/ubuntu/virtualenv/venv/bin/activate; python /home/ubuntu/virtualenv/manage.py migrate'
+  - name: carregando os dados iniciais do banco de dados
+    shell: '. /home/ubuntu/virtualenv/venv/bin/activate; python /home/ubuntu/virtualenv/manage.py loaddata clientes.json'
+  - name: iniciando o servidor na máquina da aws
+    shell: '. /home/ubuntu/virtualenv/venv/bin/activate; nohup /home/ubuntu/virtualenv/manage.py runserver 0.0.0.0:8000 &'
+    # executa a aplicação. o & faz que ele continue a execução mesmo a gente tendo saído!
